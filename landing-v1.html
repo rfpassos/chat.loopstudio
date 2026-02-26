@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PromptManager | Creative Interface</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              background: "var(--color-background)",
+              foreground: "var(--color-foreground)",
+              surface: "var(--color-surface)",
+              accent: "var(--color-accent)",
+            },
+            fontFamily: {
+              display: ["Syncopate", "sans-serif"],
+              body: ["Space Grotesk", "sans-serif"],
+            },
+            spacing: {
+              "screen-15": "15vh",
+              "screen-20": "20vh",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* CSS Variables for Theming */
+      :root {
+        /* Default: Dark Mode & Emerald Accent */
+        --color-background: #050505;
+        --color-foreground: #f5f5f5;
+        --color-surface: #111111;
+        --color-accent: #50C878;
+      }
+
+      .light {
+        /* Light Mode */
+        --color-background: #fafafa;
+        --color-foreground: #0a0a0a;
+        --color-surface: #eaeaea;
+      }
+
+      /* Essential Animations & Effects */
+      body {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+        transition:
+          background-color 0.5s ease,
+          color 0.5s ease;
+        overflow-x: hidden;
+        cursor: default;
+      }
+
+      .brutal-border {
+        border: 2px solid var(--color-foreground);
+        box-shadow: 6px 6px 0px var(--color-accent);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .brutal-border:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 0px var(--color-accent);
+      }
+
+      .text-stroke {
+        -webkit-text-stroke: 1.5px var(--color-foreground);
+        color: transparent;
+      }
+
+      .text-stroke:hover {
+        color: var(--color-accent);
+        -webkit-text-stroke: 1.5px var(--color-accent);
+        transition:
+          color 0.3s ease,
+          -webkit-text-stroke 0.3s ease;
+      }
+
+      .mix-blend-diff {
+        mix-blend-mode: difference;
+      }
+
+      /* Grain Texture */
+      .grain:after {
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opactiy='0.08'/%3E%3C/svg%3E");
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        opacity: 0.05;
+        z-index: 50;
+      }
+
+      .light .grain:after {
+        opacity: 0.07;
+      }
+
+      /* Scroll Reveal Utility */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .parallax-bg {
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        background-size: cover;
+        background-position: center;
+        filter: grayscale(100%) contrast(120%);
+        opacity: 0.2;
+        z-index: -1;
+        transition: transform 0.1s linear;
+      }
+
+      .text-accent-glow {
+        text-shadow: 0 0 20px var(--color-accent);
+      }
+      
+      .logo-text {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body class="font-body antialiased grain relative">
+    <!-- Ambient / AI generated background mapping -->
+    <div
+      class="parallax-bg"
+      id="hero-bg"
+      style="
+        background-image: url(&quot;https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2874&auto=format&fit=crop&quot;);
+      "
+    ></div>
+
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 w-full p-4 lg:p-6 z-50 flex flex-wrap justify-between items-center bg-background/90 backdrop-blur-md border-b border-foreground/10 mix-blend-normal">
+      <!-- App Logo -->
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 bg-emerald-500 rounded-lg flex items-center justify-center shadow-sm">
+           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide text-slate-950 w-6 h-6"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
+        </div>
+        <span class="text-2xl font-bold tracking-tight text-foreground hidden sm:block logo-text">PromptManager</span>
+      </div>
+
+      <!-- Controls & CTAs -->
+      <div class="flex gap-4 lg:gap-6 items-center flex-wrap justify-end">
+          
+          <!-- Theme & Color Controls -->
+          <div class="flex gap-4 items-center bg-surface/80 px-3 py-2 border border-foreground/20">
+              <!-- Languages -->
+              <div class="flex gap-2 text-[10px] md:text-xs font-bold tracking-widest uppercase">
+                  <button class="hover:text-accent font-black">PT</button>
+                  <span class="opacity-30">/</span>
+                  <button class="hover:text-accent opacity-50">EN</button>
+                  <span class="opacity-30">/</span>
+                  <button class="hover:text-accent opacity-50">ES</button>
+              </div>
+              <div class="w-px h-4 bg-foreground/30 hidden md:block"></div>
+        
+              <button id="theme-toggle" class="text-[10px] md:text-xs uppercase tracking-widest font-bold hover:text-accent transition-colors hidden md:block">
+                Light / Dark
+              </button>
+              <div class="w-px h-4 bg-foreground/30 hidden md:block"></div>
+              <div class="flex gap-2">
+                <button class="color-btn w-3 h-3 md:w-4 md:h-4 rounded-full border border-foreground/50 hover:scale-125 transition-transform" data-color="#50C878" style="background-color: #50c878" title="Emerald Green"></button>
+                <button class="color-btn w-3 h-3 md:w-4 md:h-4 rounded-full border border-foreground/50 hover:scale-125 transition-transform" data-color="#FFBF00" style="background-color: #ffbf00" title="Amber"></button>
+                <button class="color-btn w-3 h-3 md:w-4 md:h-4 rounded-full border border-foreground/50 hover:scale-125 transition-transform" data-color="#5048e5" style="background-color: #5048e5" title="Indigo"></button>
+              </div>
+          </div>
+
+          <!-- Login / Signup CTAs -->
+          <div class="hidden lg:flex gap-6 items-center">
+                <a href="https://promptmanager.loopstudio.ia.br/login" class="text-sm font-bold uppercase tracking-widest hover:text-accent transition-colors">Login</a>
+                <a href="https://promptmanager.loopstudio.ia.br/login?mode=signup" class="brutal-border px-6 py-2 text-sm font-bold uppercase tracking-widest bg-foreground text-background group hover:bg-accent transition-colors">
+                    Sign Up <span class="inline-block ml-1 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+          </div>
+      </div>
+    </header>
+
+    <!-- Hero Section (Typographic Brutalism) -->
+    <section
+      class="min-h-screen flex items-center pt-20 relative overflow-hidden"
+    >
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="grid grid-cols-12 gap-6">
+          <!-- Massive Typography -->
+          <div class="col-span-12 lg:col-span-10 relative">
+            <h1
+              class="font-display font-bold text-[12vw] leading-[0.85] uppercase tracking-tighter mix-blend-diff reveal"
+            >
+              CRAFT <br />
+              YOUR <span class="text-accent text-accent-glow">AI</span><br />
+              <span class="text-stroke">VISIONS</span>
+            </h1>
+
+            <p
+              class="mt-8 text-lg lg:text-xl max-w-xl font-light tracking-wide reveal delay-200"
+            >
+              The definitive workspace for AI image creators, prompt engineers,
+              and visual artists. Manage, iterate, and perfect your AI
+              generative workflows in a system built for zero friction.
+            </p>
+
+            <div class="mt-12 flex gap-6 reveal delay-300">
+              <a
+                href="https://promptmanager.loopstudio.ia.br/login?mode=signup"
+                class="brutal-border px-8 py-4 font-display font-bold tracking-widest uppercase bg-surface text-foreground group"
+              >
+                Start Creating
+                <span
+                  class="inline-block ml-2 group-hover:translate-x-2 transition-transform"
+                  >→</span
+                >
+              </a>
+            </div>
+          </div>
+
+          <!-- System UI Mockup (Fixed) -->
+          <div
+            class="absolute right-0 top-1/2 -translate-y-1/2 w-[55vw] hidden md:block reveal delay-500"
+            style="z-index: -1"
+          >
+            <div class="brutal-border bg-surface p-2 transform rotate-2 hover:rotate-0 transition-transform duration-500 shadow-2xl">
+               <img src="docs/Tela do sistema.png" class="w-full h-auto border border-foreground/20 opacity-90" alt="System Screen mockup">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marquee Banner -->
+    <div
+      class="border-y-2 border-foreground py-4 overflow-hidden bg-accent text-background mix-blend-normal"
+    >
+      <div
+        class="flex whitespace-nowrap font-display font-bold uppercase tracking-widest text-2xl animate-marquee relative"
+      >
+        <span class="mx-8">Control the Chaos</span> •
+        <span class="mx-8">Iterate Faster</span> •
+        <span class="mx-8">Midjourney</span> •
+        <span class="mx-8">Stable Diffusion</span> •
+        <span class="mx-8">DALL-E 3</span> •
+        <span class="mx-8">Control the Chaos</span> •
+        <span class="mx-8">Iterate Faster</span> •
+        <span class="mx-8">Midjourney</span>
+      </div>
+    </div>
+    <style>
+      .animate-marquee {
+        display: inline-block;
+        animation: marquee 15s linear infinite;
+      }
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+    </style>
+
+    <!-- Features Section (Grid Breaking) -->
+    <section class="pt-32 pb-16 relative">
+      <div class="container mx-auto px-6">
+        <h2
+          class="font-display font-bold text-6xl uppercase tracking-tighter mb-20 text-stroke reveal"
+        >
+          System <br />Capabilities
+        </h2>
+
+        <div class="grid grid-cols-12 gap-8 items-start">
+          <div class="col-span-12 md:col-span-5 reveal">
+            <div class="brutal-border p-8 bg-surface">
+              <h3 class="font-display text-2xl font-bold mb-4 uppercase">
+                Prompt Versioning
+              </h3>
+              <p class="text-foreground/70 mb-6">
+                Never lose a masterpiece. Track every iteration of your prompt,
+                negative prompts, and seed combinations with surgical precision.
+              </p>
+              
+              <!-- Timeline Mockup -->
+              <div class="border border-foreground/20 mb-6 bg-background p-6 font-sans">
+                  <!-- Timeline Item 1 -->
+                  <div class="relative flex gap-4 mb-6">
+                      <!-- Line -->
+                      <div class="absolute left-[11px] top-6 bottom-[-24px] w-px bg-foreground/10"></div>
+                      <!-- Icon -->
+                      <div class="w-6 h-6 rounded-full border border-accent text-accent flex items-center justify-center shrink-0 relative z-10" style="background-color: color-mix(in srgb, var(--color-accent) 15%, transparent)">
+                          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      </div>
+                      <!-- Content -->
+                      <div class="flex-grow">
+                          <div class="flex items-center gap-2 mb-1">
+                              <span class="font-bold text-accent text-sm tracking-tight transition-colors">v1.2</span>
+                              <span class="text-[9px] font-bold uppercase tracking-widest text-accent px-1.5 py-0.5 rounded-sm border border-accent transition-colors" style="background-color: color-mix(in srgb, var(--color-accent) 20%, transparent)">Atual</span>
+                          </div>
+                          <div class="text-[11px] text-foreground/50 mb-0.5">13/02/2026 19:18</div>
+                          <div class="text-[13px] text-foreground/70 mb-3">Versão 1.2</div>
+                          <button class="flex items-center gap-1.5 text-[11px] font-bold text-foreground hover:text-accent tracking-wide transition-colors">
+                              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                              Visualizar
+                          </button>
+                      </div>
+                  </div>
+
+                  <!-- Timeline Item 2 -->
+                  <div class="relative flex gap-4 mb-6">
+                      <!-- Line -->
+                      <div class="absolute left-[11px] top-6 bottom-[-24px] w-px bg-foreground/10"></div>
+                      <!-- Icon -->
+                      <div class="w-6 h-6 rounded-full border border-foreground/30 bg-surface text-foreground/60 flex items-center justify-center shrink-0 relative z-10 transition-colors hover:text-accent hover:border-accent">
+                          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
+                      </div>
+                      <!-- Content -->
+                      <div class="flex-grow">
+                          <div class="font-bold text-foreground text-sm mb-1 tracking-tight">v1.1</div>
+                          <div class="text-[11px] text-foreground/50 mb-0.5">02/02/2026 19:19</div>
+                          <div class="text-[13px] text-foreground/70 mb-3">Versão 1.1</div>
+                         <button class="flex items-center gap-1.5 text-[11px] font-bold text-foreground hover:text-accent tracking-wide transition-colors">
+                              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                              Visualizar
+                          </button>
+                      </div>
+                  </div>
+
+                  <!-- Timeline Item 3 -->
+                  <div class="flex gap-4">
+                      <!-- Icon -->
+                      <div class="w-6 h-6 rounded-full border border-foreground/30 bg-surface text-foreground/60 flex items-center justify-center shrink-0 relative z-10 transition-colors hover:text-accent hover:border-accent">
+                          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
+                      </div>
+                      <!-- Content -->
+                      <div class="flex-grow">
+                          <div class="font-bold text-foreground text-sm mb-1 tracking-tight">v1.0</div>
+                          <div class="text-[11px] text-foreground/50 mb-0.5">02/02/2026 00:47</div>
+                          <div class="text-[13px] text-foreground/70 mb-3">Versão inicial</div>
+                          <button class="flex items-center gap-1.5 text-[11px] font-bold text-foreground hover:text-accent tracking-wide transition-colors">
+                              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                              Visualizar
+                          </button>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="text-accent text-4xl">01</div>
+            </div>
+          </div>
+
+          <!-- Offset element -->
+          <div
+            class="col-span-12 md:col-span-6 md:col-start-7 mt-12 md:mt-32 reveal"
+          >
+            <div class="border border-foreground/30 p-2 bg-surface">
+              <img
+                src="docs/Tela do sistema2.png"
+                alt="Light Mode Interface"
+                class="w-full h-auto filter grayscale hover:grayscale-0 transition-all duration-500"
+              />
+            </div>
+            <div class="mt-6 flex justify-between items-end">
+              <div>
+                <h3
+                  class="font-display text-2xl font-bold mb-2 uppercase text-accent"
+                >
+                  Gallery Integration
+                </h3>
+                <p class="text-foreground/70 mb-4">
+                  Visual evidence of your prompt's evolution.
+                </p>
+                <a href="gallery-v1.html" class="font-bold uppercase tracking-widest text-xs border-b border-foreground hover:text-accent hover:border-accent transition-colors pb-1">Explore Gallery →</a>
+              </div>
+              <div class="text-foreground/30 font-display text-4xl">02</div>
+            </div>
+          </div>
+
+          <div
+            class="col-span-12 md:col-span-8 mt-12 reveal relative z-10"
+          >
+            <div class="brutal-border p-10 bg-accent text-background">
+              <h3 class="font-display text-3xl font-bold mb-4 uppercase">
+                Parameter Mastery
+              </h3>
+              <p class="mb-6 font-medium text-lg max-w-lg">
+                Control aspect ratios, stylize values, chaos, and model versions
+                via an interface designed specifically for AI generation math.
+              </p>
+              
+              <!-- Content Context instead of Link -->
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 border-t border-background/20 pt-8">
+                  <div class="border border-background/20 p-4 bg-background/5">
+                      <div class="text-[10px] font-bold uppercase tracking-widest opacity-60">Aspect Ratio</div>
+                      <div class="text-xl font-display font-bold mt-1">16:9</div>
+                  </div>
+                  <div class="border border-background/20 p-4 bg-background/5">
+                      <div class="text-[10px] font-bold uppercase tracking-widest opacity-60">Stylize</div>
+                      <div class="text-xl font-display font-bold mt-1">250</div>
+                  </div>
+                  <div class="border border-background/20 p-4 bg-background/5">
+                      <div class="text-[10px] font-bold uppercase tracking-widest opacity-60">Chaos</div>
+                      <div class="text-xl font-display font-bold mt-1">10</div>
+                  </div>
+                  <div class="border border-background/20 p-4 bg-background/5">
+                      <div class="text-[10px] font-bold uppercase tracking-widest opacity-60">Version</div>
+                      <div class="text-xl font-display font-bold mt-1">v6.0</div>
+                  </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-foreground py-12 bg-surface">
+      <div
+        class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8"
+      >
+        <!-- Loop Studio Logo -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 relative">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-[0_0_8px_rgba(56,189,248,0.4)]">
+              <path d="M25 50C25 36.1929 36.1929 25 50 25C63.8071 25 75 36.1929 75 50" stroke="#38BDF8" stroke-width="8" stroke-linecap="round"></path>
+              <path d="M75 50C75 63.8071 63.8071 75 50 75C36.1929 75 25 63.8071 25 50" stroke="url(#logo_grad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 12"></path>
+              <defs>
+                <linearGradient id="logo_grad" x1="25" y1="50" x2="75" y2="50" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#38BDF8"></stop>
+                  <stop offset="1" stop-color="#818CF8"></stop>
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="7" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span class="text-2xl font-bold tracking-tighter logo-text">Loop Studio <span class="text-blue-400">IA</span></span>
+        </div>
+
+        <div
+          class="flex gap-8 font-display text-sm uppercase tracking-widest font-bold items-center flex-wrap justify-center"
+        >
+          <a href="#" class="hover:text-accent transition-colors"
+            >Documentation</a
+          >
+          <a href="#" class="hover:text-accent transition-colors">Pricing</a>
+          <a href="https://promptmanager.loopstudio.ia.br/login" class="brutal-border px-6 py-3 bg-foreground text-background hover:bg-accent hover:text-background transition-colors">Login</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Theme Toggle Logic
+      const themeToggle = document.getElementById("theme-toggle");
+      const html = document.documentElement;
+
+      themeToggle.addEventListener("click", () => {
+        if (html.classList.contains("dark")) {
+          html.classList.remove("dark");
+          html.classList.add("light");
+        } else {
+          html.classList.remove("light");
+          html.classList.add("dark");
+        }
+      });
+
+      // Color Toggle Logic
+      const colorBtns = document.querySelectorAll(".color-btn");
+      const root = document.documentElement;
+
+      colorBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const color = e.target.getAttribute("data-color");
+          root.style.setProperty("--color-accent", color);
+        });
+      });
+
+      // Scroll Reveal Logic
+      const reveals = document.querySelectorAll(".reveal");
+      const revealOnScroll = () => {
+        const windowHeight = window.innerHeight;
+        const elementVisible = 100;
+
+        reveals.forEach((reveal) => {
+          const elementTop = reveal.getBoundingClientRect().top;
+          if (elementTop < windowHeight - elementVisible) {
+            reveal.classList.add("active");
+          }
+        });
+      };
+
+      window.addEventListener("scroll", revealOnScroll);
+      revealOnScroll(); // Trigger on load
+
+      // Parallax Effect
+      const heroBg = document.getElementById("hero-bg");
+      window.addEventListener("scroll", () => {
+        if (!heroBg) return;
+        const scrolled = window.scrollY;
+        heroBg.style.transform = `translateY(${scrolled * 0.4}px)`;
+      });
+    </script>
+  </body>
+</html>

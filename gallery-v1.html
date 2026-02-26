@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PromptManager | Gallery V1</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              background: "var(--color-background)",
+              foreground: "var(--color-foreground)",
+              surface: "var(--color-surface)",
+              accent: "var(--color-accent)",
+            },
+            fontFamily: {
+              display: ["Syncopate", "sans-serif"],
+              body: ["Space Grotesk", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      :root {
+        --color-background: #050505;
+        --color-foreground: #f5f5f5;
+        --color-surface: #111111;
+        --color-accent: #50C878;
+      }
+      .light {
+        --color-background: #fafafa;
+        --color-foreground: #0a0a0a;
+        --color-surface: #eaeaea;
+      }
+      body {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+        transition: background-color 0.5s ease, color 0.5s ease;
+      }
+      .brutal-border {
+        border: 2px solid var(--color-foreground);
+        box-shadow: 6px 6px 0px var(--color-accent);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .brutal-border:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 0px var(--color-accent);
+      }
+      .text-stroke {
+        -webkit-text-stroke: 1.5px var(--color-foreground);
+        color: transparent;
+      }
+      .grain:after {
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opactiy='0.08'/%3E%3C/svg%3E");
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        pointer-events: none; opacity: 0.05; z-index: 50;
+      }
+      .light .grain:after { opacity: 0.07; }
+      .logo-text { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    </style>
+  </head>
+  <body class="font-body antialiased grain relative">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full p-4 lg:p-6 z-50 flex flex-wrap justify-between items-center bg-background/90 backdrop-blur-md border-b border-foreground/10 mix-blend-normal">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 bg-emerald-500 rounded-lg flex items-center justify-center shadow-sm">
+           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide text-slate-950 w-6 h-6"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-foreground hidden sm:block logo-text">PromptManager</span>
+      </div>
+      <div class="flex gap-4 lg:gap-6 items-center flex-wrap justify-end">
+          <div class="flex gap-4 items-center bg-surface/80 px-3 py-2 border border-foreground/20">
+              <button id="theme-toggle" class="text-[10px] md:text-xs uppercase tracking-widest font-bold hover:text-accent transition-colors">
+                Light / Dark
+              </button>
+              <div class="w-px h-4 bg-foreground/30"></div>
+              <div class="flex gap-2">
+                <button class="color-btn w-3 h-3 md:w-4 md:h-4 rounded-full border border-foreground/50 hover:scale-125 transition-transform" data-color="#50C878" style="background-color: #50c878" title="Emerald Green"></button>
+                <button class="color-btn w-3 h-3 md:w-4 md:h-4 rounded-full border border-foreground/50 hover:scale-125 transition-transform" data-color="#FFBF00" style="background-color: #ffbf00" title="Amber"></button>
+                <button class="color-btn w-3 h-3 md:w-4 md:h-4 rounded-full border border-foreground/50 hover:scale-125 transition-transform" data-color="#5048e5" style="background-color: #5048e5" title="Indigo"></button>
+              </div>
+          </div>
+          <div class="hidden lg:flex gap-6 items-center">
+                <a href="landing-v1.html" class="text-sm font-bold uppercase tracking-widest hover:text-accent transition-colors">← Back</a>
+                <a href="https://promptmanager.loopstudio.ia.br/login" class="brutal-border px-6 py-2 text-sm font-bold uppercase tracking-widest bg-foreground text-background group hover:bg-accent transition-colors">
+                    Login Platform
+                </a>
+          </div>
+      </div>
+    </header>
+
+    <main class="pt-32 pb-24 container mx-auto px-6 max-w-7xl">
+        <h1 class="font-display font-bold text-5xl md:text-7xl uppercase tracking-tighter mb-4 text-stroke">
+            Visual<br/>Evidence
+        </h1>
+        <p class="text-xl max-w-2xl text-foreground/70 mb-16">Explore prompts successfully engineered inside the platform. Inspect versions, models, and precise execution tags.</p>
+
+        <!-- Gallery Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12">
+            
+            <!-- Item 1 -->
+            <div class="brutal-border bg-surface flex flex-col">
+                <div class="relative w-full aspect-[4/3] overflow-hidden border-b-2 border-foreground group">
+                    <img src="assets/gallery1.png" alt="Cyberpunk" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 flex flex-col grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-xl uppercase tracking-tighter">Neon Hacker</h3>
+                            <div class="text-xs font-bold text-foreground/50 tracking-widest mt-1">v1.2.0 • @loopstudio</div>
+                        </div>
+                        <div class="text-xs font-bold bg-accent text-background px-2 py-1 uppercase tracking-widest border border-foreground">
+                            Midjourney v6
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-foreground/80 mb-6 font-light">Cinematic portrait of a cyberpunk hacker in neon-lit rain with volumetric fog and hyper-realistic lighting.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-8">
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Cyberpunk</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">85mm Lens</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">8K Resolution</span>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t-2 border-foreground/10">
+                        <button onclick="copyPrompt('Cinematic portrait of a cyberpunk hacker in neon-lit rain, 85mm lens, extreme detail, hyper-realistic, volumetric fog, rim lighting, 8k resolution')" class="w-full brutal-border py-4 font-display font-bold uppercase tracking-widest text-sm text-center bg-background hover:bg-accent hover:text-background transition-colors active:translate-y-1">
+                            Copy Prompt
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="brutal-border bg-surface flex flex-col">
+                <div class="relative w-full aspect-[4/3] overflow-hidden border-b-2 border-foreground group">
+                    <img src="assets/gallery2.png" alt="Mushroom" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 flex flex-col grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-xl uppercase tracking-tighter">Bioluminescent Spore</h3>
+                            <div class="text-xs font-bold text-foreground/50 tracking-widest mt-1">v2.1.0 • @botanist</div>
+                        </div>
+                        <div class="text-xs font-bold bg-accent text-background px-2 py-1 uppercase tracking-widest border border-foreground">
+                            DALL-E 3
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-foreground/80 mb-6 font-light">Macro photography capturing the iridescent details of a glowing mushroom in a mystical dark forest.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-8">
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Macro</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Bioluminescence</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Bokeh</span>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t-2 border-foreground/10">
+                        <button onclick="copyPrompt('Macro photography of an iridescent glowing mushroom in a dark mystical forest, bioluminescence, bokeh, highly detailed 8k')" class="w-full brutal-border py-4 font-display font-bold uppercase tracking-widest text-sm text-center bg-background hover:bg-accent hover:text-background transition-colors active:translate-y-1">
+                            Copy Prompt
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="brutal-border bg-surface flex flex-col">
+                <div class="relative w-full aspect-[4/3] overflow-hidden border-b-2 border-foreground group">
+                    <img src="assets/gallery3.png" alt="Eco City" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 flex flex-col grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-xl uppercase tracking-tighter">Canyon Eco-City</h3>
+                            <div class="text-xs font-bold text-foreground/50 tracking-widest mt-1">v4.0.0 • @architect</div>
+                        </div>
+                        <div class="text-xs font-bold bg-accent text-background px-2 py-1 uppercase tracking-widest border border-foreground">
+                            Midjourney v6
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-foreground/80 mb-6 font-light">Futuristic eco-city built directly into massive canyon walls featuring waterfalls and flying vehicles.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-8">
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Architecture</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Utopia</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">UE5 Render</span>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t-2 border-foreground/10">
+                        <button onclick="copyPrompt('Architectural rendering of a futuristic eco-city built into a massive canyon wall, waterfalls, flying vehicles, golden hour lighting, unreal engine 5 style')" class="w-full brutal-border py-4 font-display font-bold uppercase tracking-widest text-sm text-center bg-background hover:bg-accent hover:text-background transition-colors active:translate-y-1">
+                            Copy Prompt
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="brutal-border bg-surface flex flex-col">
+                <div class="relative w-full aspect-[4/3] overflow-hidden border-b-2 border-foreground group">
+                    <img src="assets/gallery4.png" alt="Mechanical Eye" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 flex flex-col grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-xl uppercase tracking-tighter">Amber Iris</h3>
+                            <div class="text-xs font-bold text-foreground/50 tracking-widest mt-1">v1.0.1 • @gearmaker</div>
+                        </div>
+                        <div class="text-xs font-bold bg-accent text-background px-2 py-1 uppercase tracking-widest border border-foreground">
+                            Stable Diffusion
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-foreground/80 mb-6 font-light">Hyper-detailed mechanical eye composed of intricate gears and wires captured with studio macro lighting.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-8">
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Steampunk</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Photorealistic</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest border border-foreground/20 px-2 py-1">Macro</span>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t-2 border-foreground/10">
+                        <button onclick="copyPrompt('A hyper-detailed mechanical eye with glowing amber iris, intricate gears and wires, studio lighting, macro shot, photorealistic steampunk')" class="w-full brutal-border py-4 font-display font-bold uppercase tracking-widest text-sm text-center bg-background hover:bg-accent hover:text-background transition-colors active:translate-y-1">
+                            Copy Prompt
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-foreground py-12 bg-surface">
+      <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 relative">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-[0_0_8px_rgba(56,189,248,0.4)]">
+              <path d="M25 50C25 36.1929 36.1929 25 50 25C63.8071 25 75 36.1929 75 50" stroke="#38BDF8" stroke-width="8" stroke-linecap="round"></path>
+              <path d="M75 50C75 63.8071 63.8071 75 50 75C36.1929 75 25 63.8071 25 50" stroke="url(#logo_grad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 12"></path>
+              <defs>
+                <linearGradient id="logo_grad" x1="25" y1="50" x2="75" y2="50" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#38BDF8"></stop>
+                  <stop offset="1" stop-color="#818CF8"></stop>
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="7" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span class="text-2xl font-bold tracking-tighter logo-text">Loop Studio <span class="text-blue-400">IA</span></span>
+        </div>
+        <div class="flex gap-8 font-display text-sm uppercase tracking-widest font-bold items-center flex-wrap justify-center">
+          <a href="https://promptmanager.loopstudio.ia.br/login" class="brutal-border px-6 py-3 bg-foreground text-background hover:bg-accent hover:text-background transition-colors">Start Using</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-accent text-background font-bold uppercase tracking-widest px-8 py-4 brutal-border translate-y-32 opacity-0 transition-all duration-300 z-50">
+        Prompt Copied!
+    </div>
+
+    <script>
+      // Theme Toggle Logic
+      const themeToggle = document.getElementById("theme-toggle");
+      const html = document.documentElement;
+
+      themeToggle.addEventListener("click", () => {
+        if (html.classList.contains("dark")) {
+          html.classList.remove("dark");
+          html.classList.add("light");
+        } else {
+          html.classList.remove("light");
+          html.classList.add("dark");
+        }
+      });
+
+      // Color Toggle Logic
+      const colorBtns = document.querySelectorAll(".color-btn");
+      const root = document.documentElement;
+
+      colorBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          root.style.setProperty("--color-accent", e.target.getAttribute("data-color"));
+        });
+      });
+
+      // Copy Prompt Logic
+      function copyPrompt(text) {
+          navigator.clipboard.writeText(text).then(() => {
+              const toast = document.getElementById('toast');
+              toast.style.transform = 'translate(-50%, 0)';
+              toast.style.opacity = '1';
+              setTimeout(() => {
+                  toast.style.transform = 'translate(-50%, 100px)';
+                  toast.style.opacity = '0';
+              }, 2500);
+          });
+      }
+    </script>
+  </body>
+</html>
