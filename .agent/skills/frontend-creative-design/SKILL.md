@@ -1,17 +1,17 @@
 ---
-name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.
+name: frontend-creative-design
+description: Create distinctive, high-impact frontend interfaces like landing pages, promotional sites, marketing pages, and portfolios. Focuses on bold aesthetics, "wow factor", unexpected spatial composition, expressive typography, and breaking generic conventions. Generates highly creative, polished code that avoids "AI slop" or standard component libraries.
 license: Complete terms in LICENSE.txt
 ---
 
-This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+This skill guides creation of distinctive, memorable frontend interfaces designed for conversion, branding, and impact. Implement real working code with exceptional attention to aesthetic details, visceral reactions, and creative choices.
 
-The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
+The user provides frontend requirements: a landing page, promotional site, portfolio, or highly visual web component. They may include context about the brand, target audience, or aesthetic goals.
 
-## Design Thinking
+## Creative Design Thinking
 
 Before coding, understand the context and commit to a BOLD aesthetic direction:
-- **Purpose**: What problem does this interface solve? Who uses it?
+- **Purpose**: What emotion does this page need to evoke? (Trust, excitement, curiosity, luxury?)
 - **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
 - **Constraints**: Technical requirements (framework, performance, accessibility).
 - **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
